@@ -5,6 +5,12 @@ const userModel = require("../models/user.model");
 async function registerController(req, res) {
     const { email, username, password, bio, profileImage } = req.body;
 
+    if (!email || !username || !password) {
+        return res.status(400).json({
+            message: "All fields are required"
+        })
+    }
+
     // const isUserExistByEmail = await userModel.findOne({ email });
 
     // if (isUserExistByEmail) {
@@ -66,12 +72,18 @@ async function registerController(req, res) {
 async function loginController(req, res) {
     const { username, email, password } = req.body;
 
+    if (!username || !password) {
+        return res.status(400).json({
+            message: "All fields are required"
+        })
+    }
+
     const user = await userModel.findOne({
         $or: [
             { username },
             { email }
         ]
-    })
+    }).select("+password")
 
     if (!user) {
         return res.status(404).json({
